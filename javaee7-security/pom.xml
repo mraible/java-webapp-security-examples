@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.raibledesigns</groupId>
-    <artifactId>javaee-webapp-security-example</artifactId>
+    <artifactId>javaee7-security</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>Java EE Web Application Security Example</name>
     <description>
-        An example project showing how to configure security with Java EE, Spring Security and Apache Shiro.
+        An example project showing how to configure security with Java EE.
     </description>
 
     <parent>
