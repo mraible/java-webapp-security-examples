@@ -1,0 +1,12 @@
+<?xml version="1.0"  encoding="ISO-8859-1"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+
+    <!-- configuration for WELD, as explained here: https://docs.jboss.org/weld/reference/latest/en-US/html/environments.html#_jetty -->
+    <Set name="serverClasses">
+        <Array type="java.lang.String">
+            <Item>-org.eclipse.jetty.servlet.ServletContextHandler.Decorator</Item>
+        </Array>
+    </Set>
+
+</Configure>
