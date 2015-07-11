@@ -11,8 +11,8 @@
     Please enter your username and password to login.
 </p>
 
-<p th:if="${param.error}" th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION'].message}" style="color:red">
-    Invalid username and password. Reason: <br/><span th:text="${errorMsg}">Wrong input!</span>
+<p th:if="${param.error}" style="color:red">
+    Invalid username and password.
 </p>
 <p th:if="${param.logout}" style="color: green">
     You have been logged out.
