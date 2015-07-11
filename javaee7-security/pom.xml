@@ -40,6 +40,22 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers.glassfish</groupId>
+            <artifactId>jersey-gf-cdi</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers.glassfish</groupId>
+            <artifactId>jersey-gf-cdi-ban-custom-hk2-binding</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld.servlet</groupId>
+            <artifactId>weld-servlet-core</artifactId>
+            <version>2.2.5.Final</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -47,7 +63,59 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.2.1.v20140609</version>
+                <version>9.2.10.v20150310</version>
+                <configuration>
+                    <loginServices>
+                        <loginService implementation="org.eclipse.jetty.security.JDBCLoginService">
+                            <name>Java EE Login</name>
+                            <config>${basedir}/src/test/resources/jdbc-realm.properties</config>
+                        </loginService>
+                    </loginServices>
+                    <jettyXml>
+                        ${basedir}/src/test/resources/jetty.xml,${basedir}/src/test/resources/jetty-http.xml,${basedir}/src/test/resources/jetty-ssl.xml,${basedir}/src/test/resources/jetty-https.xml
+                    </jettyXml>
+                    <contextXml>${basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
+                    <webApp>
+                        <jettyEnvXml>${basedir}/src/main/webapp/WEB-INF/jetty-env.xml</jettyEnvXml>
+                    </webApp>
+                </configuration>
+                <dependencies>
+                    <!-- MySQL for JDBC Realm -->
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.36</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>keytool-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>generateKeyPair</id>
+                        <goals>
+                            <goal>generateKeyPair</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <keystore>${project.build.directory}/ssl.keystore</keystore>
+                    <dname>cn=localhost</dname>
+                    <keypass>secret</keypass>
+                    <storepass>secret</storepass>
+                    <alias>localhost</alias>
+                    <keyalg>RSA</keyalg>
+                </configuration>
             </plugin>
         </plugins>
     </build>
