@@ -19,7 +19,6 @@
 </p>
 
 <form method="post" id="loginForm" th:action="@{/login}">
-
     <input type="text" name="username" id="username" placeholder="Username" required="true" autofocus="true"/>
     <input type="password" name="password" id="password" placeholder="Password" required="true"/>
 
@@ -31,5 +30,35 @@
     <input type="submit" name="login" id="login" value="Login"/>
 </form>
 
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+    var loginFailed = function (data, status) {
+        console.log('failed: ' + JSON.stringify(data));
+        $(".error").remove();
+        $('#username').before('<p style="color: red" class="error">Login failed, please try again.</p>');
+    };
+    $("#login").on('click', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/api/login",
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.withCredentials = true;
+            },
+            data: $("#loginForm").serialize(),
+            success: function (data, status) {
+                console.log(data)
+                if (data.loggedIn) {
+                    // success
+                    location.href = '/api/health';
+                } else {
+                    loginFailed(data);
+                }
+            },
+            error: loginFailed
+        });
+    });
+
+    </script>
 </body>
 </html>

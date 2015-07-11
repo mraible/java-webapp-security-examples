@@ -22,10 +22,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf()
-                .and()
+            .csrf().disable()
             .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/api/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -43,13 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-            .inMemoryAuthentication()
-                .withUser("user").password("user").roles("USER");
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication().dataSource(this.dataSource);
     }
 }
