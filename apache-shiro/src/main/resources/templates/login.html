@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+</head>
+<body>
+
+<h2>Sign In</h2>
+
+<p>
+    Please enter your username and password to login.
+</p>
+
+<p th:if="${shiroLoginFailure}" style="color:red">
+    Invalid username and password.
+</p>
+<p th:if="${param.logout}" style="color: green">
+    You have been logged out.
+</p>
+
+<form method="post" id="loginForm" th:action="@{/login}">
+
+    <input type="text" name="username" id="username" placeholder="Username" required="true" autofocus="true"/>
+    <input type="password" name="password" id="password" placeholder="Password" required="true"/>
+
+    <div>
+        <input type="checkbox" name="rememberMe" id="rememberMe"/>
+        <label for="rememberMe">Remember me</label>
+    </div>
+
+    <input type="submit" name="login" id="login" value="Login"/>
+</form>
+
+</body>
+</html>
