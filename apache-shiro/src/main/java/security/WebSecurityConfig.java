@@ -1,6 +1,5 @@
 package security;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
@@ -12,11 +11,14 @@ import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.filter.authc.UserFilter;
 import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.AbstractShiroFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ import java.util.Map;
 public class WebSecurityConfig {
 
     @Bean(name = "shiroFilter")
-    public ShiroFilterFactoryBean shiroFilter() {
+    public AbstractShiroFilter shiroFilter() throws Exception {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         Map<String, String> filterChainDefinitionMapping = new HashMap<>();
         filterChainDefinitionMapping.put("/api/health", "authc,roles[guest],ssl[8443]");
@@ -42,7 +44,7 @@ public class WebSecurityConfig {
         filters.put("roles", new RolesAuthorizationFilter());
         filters.put("user", new UserFilter());
         shiroFilter.setFilters(filters);
-        return shiroFilter;
+        return (AbstractShiroFilter) shiroFilter.getObject();
     }
 
     @Bean(name = "securityManager")
@@ -52,6 +54,9 @@ public class WebSecurityConfig {
         return securityManager;
     }
 
+    @Autowired
+    private DataSource dataSource;
+
     @Bean(name = "jdbcRealm")
     @DependsOn("lifecycleBeanPostProcessor")
     public JdbcRealm jdbcRealm() {
@@ -59,19 +64,13 @@ public class WebSecurityConfig {
         HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher();
         credentialsMatcher.setHashAlgorithmName(Sha256Hash.ALGORITHM_NAME);
         realm.setCredentialsMatcher(credentialsMatcher);
-        realm.setAuthenticationQuery("select user_pass from users where user_name = ?");
-        realm.setUserRolesQuery("select role_name from user_roles where user_name = ?");
-        MysqlDataSource ds = new MysqlDataSource();
-        ds.setServerName("localhost");
-        ds.setUser("root");
-        ds.setDatabaseName("appfuse");
-        realm.setDataSource(ds);
+        realm.setDataSource(dataSource);
         realm.init();
         return realm;
     }
 
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 }

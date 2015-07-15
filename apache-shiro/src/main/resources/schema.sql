@@ -1,10 +1,10 @@
-create table users (
-  user_name         varchar(30) not null primary key,
-  user_pass         varchar(100) not null
+create table if not exists users (
+  username varchar(256),
+  password varchar(256),
+  enabled boolean
 );
 
-create table user_roles (
-  user_name         varchar(30) not null,
-  role_name         varchar(30) not null,
-  primary key (user_name, role_name)
+create table if not exists user_roles (
+  username varchar(256),
+  role_name varchar(256)
 );
