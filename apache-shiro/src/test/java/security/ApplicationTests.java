@@ -53,9 +53,9 @@ public class ApplicationTests {
     }
 
     @Test
-    public void contextRootNeedsAuthentication() throws Exception {
+    public void apiNeedsAuthentication() throws Exception {
         mockMvc
-            .perform(get("/"))
+            .perform(get("/api/health"))
             .andExpect(status().is3xxRedirection());
     }
 
