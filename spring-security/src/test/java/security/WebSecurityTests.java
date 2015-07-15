@@ -118,15 +118,30 @@ public class WebSecurityTests {
     }
 
     private void getCsrf(MultiValueMap<String, String> form, HttpHeaders headers) {
-        ResponseEntity<String> page = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/login", String.class);
+        ResponseEntity<? extends CsrfToken> page = new TestRestTemplate().getForEntity(
+                "http://localhost:" + this.port + "/api/csrf", CsrfToken.class);
         String cookie = page.getHeaders().getFirst("Set-Cookie");
         headers.set("Cookie", cookie);
-        String body = page.getBody();
-        Matcher matcher = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*")
-                .matcher(body);
-        matcher.find();
-        form.set("_csrf", matcher.group(1));
+        CsrfToken token = page.getBody();
+        form.set(token.parameterName, token.token);
+    }
+
+    static class CsrfToken {
+        private String parameterName;
+        private String token;
+
+        public String getParameterName() {
+            return parameterName;
+        }
+        public void setParameterName(String parameterName) {
+            this.parameterName = parameterName;
+        }
+        public String getToken() {
+            return token;
+        }
+        public void setToken(String token) {
+            this.token = token;
+        }
     }
 
 }
