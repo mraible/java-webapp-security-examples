@@ -15,8 +15,6 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -95,15 +93,18 @@ public class WebSecurityTests {
 
     @Test
     public void testProtected() throws Exception {
-        ResponseEntity<String> entity = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/api/health", String.class);
-        assertTrue("Wrong body (message doesn't match):\n" + entity.getBody(), entity
-                .getBody().contains("Sign In"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        ResponseEntity<String> entity = new TestRestTemplate().exchange(
+                "http://localhost:" + this.port + "/api/health", HttpMethod.GET,
+               new HttpEntity<>(headers),
+               String.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
     }
 
     @Test
     public void testAuthorizedAccess() throws Exception {
-        ResponseEntity<String> entity = new TestRestTemplate("user", "user")
+        ResponseEntity<String> entity = new TestRestTemplate("user", "password")
                 .getForEntity("http://localhost:" + this.port + "/api/health", String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
     }
@@ -112,9 +113,7 @@ public class WebSecurityTests {
     public void testUnauthorizedAccess() throws Exception {
         ResponseEntity<String> entity = new TestRestTemplate("admin", "admin")
                 .getForEntity("http://localhost:" + this.port + "/api/health", String.class);
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertTrue("Wrong body (message doesn't match):\n" + entity.getBody(), entity
-                .getBody().contains("Sign In"));
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
     }
 
     private void getCsrf(MultiValueMap<String, String> form, HttpHeaders headers) {
