@@ -41,6 +41,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.containers.glassfish</groupId>
             <artifactId>jersey-gf-cdi</artifactId>
             <version>${jersey.version}</version>
