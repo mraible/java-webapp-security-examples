@@ -41,11 +41,12 @@
         e.preventDefault();
         $.ajax({
             url: "/api/login",
-            type: "POST",
+            type: "GET",
             beforeSend: function (xhr) {
+                var basic = btoa($("#username").val() + ":" + $("#password").val())
                 xhr.withCredentials = true;
+                xhr.setRequestHeader ("Authorization", "Basic " + basic);
             },
-            data: $("#loginForm").serialize(),
             success: function (data, status) {
                 console.log(data)
                 if (data.loggedIn) {
