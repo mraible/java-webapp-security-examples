@@ -19,6 +19,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.raibledesigns.security</groupId>
     <artifactId>java-webapp-security-examples</artifactId>
     <packaging>pom</packaging>
     <name>Java Web App Security Examples</name>
